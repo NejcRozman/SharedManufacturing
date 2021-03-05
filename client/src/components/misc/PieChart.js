@@ -22,7 +22,6 @@ const CenteredMetric = ({ dataWithArc, centerX, centerY }) => {
 };
 
 const PieChart = ({ data }) => (
-
     <ResponsivePie
         data={data}
         theme={{ "fontSize": 16, fontFamily: "Roboto, sans-serif", axis: { legend: { text: { fontSize: "16px", fontWeight: "bold", fontFamily: "Roboto, sans-serif" } } } }}

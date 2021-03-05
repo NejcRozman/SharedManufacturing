@@ -17,6 +17,10 @@ const TransactionDataSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    timeForService: {
+        type: Number,
+        default: 1
+    },
     price: {
         type: Number,
         required: true

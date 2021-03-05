@@ -2,7 +2,7 @@ import React from 'react'
 import { ResponsiveBar } from '@nivo/bar';
 import { useGlobalContext} from "../../context/context";
 
-const BarChart = ({dataArray, modifiedData}) => {
+const BarChart = ({dataArray, modifiedData, checked}) => {
     const { gameData, openTradeModal, setTradeModalContent, openCancelOrderModal, setCancelOrderModalContent } = useGlobalContext();
 
     const setTradeModal = (data) => {
@@ -36,7 +36,11 @@ const BarChart = ({dataArray, modifiedData}) => {
     const renderLabel = (data) => {
         const realData = dataArray.filter(item => item._id === data._id);
         if (!(!Array.isArray(realData) || !realData.length)) {
-            return realData[0].price.toString();
+            if (!checked) {
+                return realData[0].price.toString();
+            } else {
+                return millisToMinutesAndSecondsShort(realData[0].timeForService);
+            }
         }
     };
 
@@ -47,12 +51,47 @@ const BarChart = ({dataArray, modifiedData}) => {
         }
     };
 
+    const millisToMinutesAndSecondsShort = (millis) => {
+        let d = new Date(1000*Math.round(millis/1000));
+        if (d.getUTCMinutes() === 0) {
+            return ( d.getUTCSeconds() + 's' );
+        } else {
+            return ( d.getUTCMinutes() + ':' + d.getUTCSeconds());
+        }
+    };
+
+    function millisToMinutesAndSeconds(millis) {
+        let d = new Date(1000*Math.round(millis/1000));
+        if (d.getUTCMinutes() === 0) {
+            return ( d.getUTCSeconds() + 's' );
+        } else {
+            return ( d.getUTCMinutes() + 'min ' + d.getUTCSeconds() + 's' );
+        }
+    }
+
+    const toggleData = () => {
+        if (!checked) {
+            return [ 'price' ];
+        } else {
+            return [ 'height' ]
+        }
+    };
+
+    const toggleNameAxis = () => {
+        if (!checked) {
+            return ('PRICE');
+        } else {
+            return ('TIME FOR SERVICE');
+        }
+    };
+
+
     return (
         <ResponsiveBar
             data={modifiedData}
             onClick={(data) => setTradeModal(data.data)}
             onMouseEnter={(data, event) => mouseHover(data.data, event)}
-            keys={[ 'price' ]}
+            keys={toggleData}
             indexBy="playerName"
             margin={{ top: 10, right: 20, bottom: 50, left: 70 }}
             padding={0.25}
@@ -71,7 +110,7 @@ const BarChart = ({dataArray, modifiedData}) => {
                 tickSize: 5,
                 tickPadding: 5,
                 tickRotation: 0,
-                legend: 'PRICE',
+                legend: toggleNameAxis(),
                 legendPosition: 'middle',
                 legendOffset: -50,
                 tickValues: 3
@@ -79,8 +118,10 @@ const BarChart = ({dataArray, modifiedData}) => {
             tooltip={({ data, id }) => {
                 return (
                     <strong>
-                        {id} - {data.playerName}: {renderTooltip(data)}
+                        <p>Price - {data.playerName}: {renderTooltip(data)}</p>
+                        <p>Time for service: {millisToMinutesAndSeconds(data.timeForService)}</p>
                     </strong>
+
                 )
             }}
             label={(data) => renderLabel(data.data)}

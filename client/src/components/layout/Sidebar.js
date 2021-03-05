@@ -9,6 +9,7 @@ const Sidebar = () => {
     const { gameData, openCreateOrderModal } = useGlobalContext();
     const [orderExists, setOrderExists] = useState(false);
     const [relativeStake, setRelativeStake] = useState(0);
+    const [tableDataArray, setTableDataArray] = useState([]);
 
     const orderNotExists = async () => {
         const order = gameData.orders.filter(item => item.provider === gameData.player._id);
@@ -17,8 +18,14 @@ const Sidebar = () => {
 
     useEffect(() => {
         orderNotExists();
-        let newRelativeStake = Math.floor((gameData.player.stake / gameData.totalStake) * 100);
+        let newRelativeStake = ((gameData.player.stake / gameData.totalStake) * 100).toFixed(1);
         setRelativeStake(newRelativeStake);
+        const renderTableData = async () => {
+            const players = await gameData.players.sort((a, b) => parseInt(b.upgradeNumber) - parseInt(a.upgradeNumber));
+            const playersArray = await players.slice(0, 5);
+            setTableDataArray(playersArray);
+        };
+        renderTableData();
     }, [gameData]);
 
     return (
@@ -53,10 +60,56 @@ const Sidebar = () => {
                         <FaChartPie style={{color: "#ffba72", fontSize: "22px"}}/>
                         <h4>{gameData.player.stake} ({relativeStake}%)</h4>
                     </div>
+                    <hr />
+                    <div className="stats-sidebar-values-stat">
+                        <h4>Number of upgrades: {gameData.player.upgradeNumber}</h4>
+                    </div>
+                    <div className="stats-sidebar-other-services">
+                        <div className={`${(gameData.player.amountOfOtherService1 > 0) ? 'stats-sidebar-container-green' : 'stats-sidebar-container-red'}`}>
+                            <h4>{gameData.player.typeOfOtherService1}</h4>
+                        </div>
+                        <div className={`${(gameData.player.amountOfOtherService1 > 0) ? 'stats-sidebar-container-green' : 'stats-sidebar-container-red'}`}>
+                            <h4>{gameData.player.amountOfOtherService1}</h4>
+                        </div>
+                    </div>
+                    <div className="stats-sidebar-other-services">
+                        <div className={`${(gameData.player.amountOfOtherService2 > 0) ? 'stats-sidebar-container-green' : 'stats-sidebar-container-red'}`}>
+                            <h4>{gameData.player.typeOfOtherService2}</h4>
+                        </div>
+                        <div className={`${(gameData.player.amountOfOtherService2 > 0) ? 'stats-sidebar-container-green' : 'stats-sidebar-container-red'}`}>
+                            <h4>{gameData.player.amountOfOtherService2}</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="create-order-container">
                 {gameData.player.amountOfAvailableService === 1 && orderExists ? <button className="create-order-btn" onClick={openCreateOrderModal}>Set Price</button> : ''}
+            </div>
+            <div className="ranking-sidebar">
+                <h3>Top 5 players</h3>
+                <table className="table-all-rankings">
+                    <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Number of upgrades</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        tableDataArray.map((item, index) => (
+                            <tr
+                                key={item._id}
+                                style={{background: `${item.playerName === gameData.player.playerName ? '#fffd6c' : ''}`}}
+                            >
+                                <td><strong>{index + 1}</strong></td>
+                                <td>{item.playerName}</td>
+                                <td>{item.upgradeNumber}</td>
+                            </tr>
+                        ))
+                    }
+                    </tbody>
+                </table>
             </div>
             <CreateOrderModal/>
         </div>

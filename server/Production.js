@@ -1,4 +1,5 @@
 const Player = require('./models/Player');
+const Service = require('./models/Service');
 
 class Production {
     constructor() {
@@ -7,39 +8,40 @@ class Production {
         this.timeInterval = {};
     }
 
-    async startProduction() {
+    async q_set_production (ioSocket, playerSockets, queue) {
         return new Promise(async (resolve, reject) => {
             let that = this;
             try {
-                const players = await Player.find();
-                await players.forEach(async player => {
-                    const startNextTimeForService = await that.productionFunction(player.timeForService, player.upgradeNumber);
-                    await Player.findByIdAndUpdate(player._id, {
-                        nextTimeForService: startNextTimeForService,
-                        initialTimeForService: player.timeForService
-                    });
-                });
-                that.timeInterval = await setInterval(async () => {
-                    let currentTime = Date.now();
+                return queue.add(async () => {
                     const players = await Player.find();
                     await players.forEach(async player => {
-                        if (player.amountOfAvailableService === 0) {
-                            if (player.previousAmountOfAvailableService === 1) {
-                                await Player.findByIdAndUpdate(player._id, {
-                                    serviceTimestamp: currentTime
-                                });
-                            }
-                            if ((currentTime - player.serviceTimestamp) >= player.timeForService) {
-                                await Player.findByIdAndUpdate(player._id, {
-                                    amountOfAvailableService: player.amountOfAvailableService + 1,
-                                    serviceTimestamp: currentTime
-                                });
-                            }
-                        }
+                        const startNextTimeForService = await that.productionFunction(player.timeForService, player.upgradeNumber);
+                        ioSocket.to(playerSockets.get(player._id.toHexString())).emit("initial_time", startNextTimeForService);
+                        await Player.findByIdAndUpdate(player._id, {
+                            nextTimeForService: startNextTimeForService,
+                            initialTimeForService: player.timeForService
+                        });
+                        resolve(true);
+                    });
+                });
+            } catch(err) {
+                reject(err);
+            }
+        })
+    };
+
+    async q_interval (ioSocket, playerSockets, queue) {
+        return new Promise(async (resolve, reject) => {
+            let that = this;
+            try {
+                return queue.add(async () => {
+                    const players = await Player.find();
+                    await players.forEach(async player => {
                         if ((player.amountOfOtherService1 > 0) && (player.amountOfOtherService2 > 0)) {
                             const newTimeForService = await that.productionFunction(player.initialTimeForService, player.upgradeNumber);
                             const newNextTimeForService = await that.productionFunction(player.initialTimeForService, player.upgradeNumber + 1);
-                            console.log(newNextTimeForService);
+                            ioSocket.to(playerSockets.get(player._id.toHexString())).emit("update_production", newTimeForService, newNextTimeForService, player.upgradeNumber + 1, player.amountOfOtherService1 - 1, player.amountOfOtherService2 - 1);
+                            ioSocket.emit("update_upgrade", player._id.toHexString(), player.upgradeNumber + 1);
                             await Player.findByIdAndUpdate(player._id, {
                                 timeForService: newTimeForService,
                                 nextTimeForService: newNextTimeForService,
@@ -48,10 +50,47 @@ class Production {
                                 amountOfOtherService2: player.amountOfOtherService2 - 1
                             });
                         }
-                        await Player.findByIdAndUpdate(player._id, {
-                            previousAmountOfAvailableService: player.amountOfAvailableService
-                        });
                     });
+                    let currentTime = Date.now();
+                    let services = await Service.find();
+                    await services.forEach(async service => {
+                        if ((currentTime - service.serviceTimestamp) >= service.timeForService) {
+                            ioSocket.emit("delete_service", service._id.toHexString());
+                            ioSocket.to(playerSockets.get(service.provider.toString())).emit("update_available_service", 1);
+                            await Player.findByIdAndUpdate(service.provider, {
+                                amountOfAvailableService: 1,
+                            });
+                            const consumer = await Player.findById(service.consumer);
+                            if (consumer.typeOfOtherService1 === service.typeOfService) {
+                                ioSocket.to(playerSockets.get(service.consumer.toString())).emit("update_other_service1", consumer.amountOfOtherService1 + 1);
+                                await Player.findByIdAndUpdate(service.consumer.toString(), {
+                                    $inc: { amountOfOtherService1: 1 }
+                                });
+                            } if (consumer.typeOfOtherService2 === service.typeOfService) {
+                                ioSocket.to(playerSockets.get(service.consumer.toString())).emit("update_other_service2", consumer.amountOfOtherService2 + 1);
+                                await Player.findByIdAndUpdate(service.consumer.toString(), {
+                                    $inc: { amountOfOtherService2: 1 }
+                                });
+                            }
+                            await Service.findByIdAndDelete(service._id);
+                        }
+                    });
+                    resolve(true);
+                });
+            } catch(err) {
+                reject(err);
+            }
+        })
+
+    };
+
+    async startProduction(ioSocket, playerSockets, queue) {
+        return new Promise(async (resolve, reject) => {
+            let that = this;
+            try {
+                await that.q_set_production(ioSocket, playerSockets, queue);
+                that.timeInterval = await setInterval(async () => {
+                    await that.q_interval(ioSocket, playerSockets, queue);
                 }, that.period);
                 resolve(true);
             } catch(err) {

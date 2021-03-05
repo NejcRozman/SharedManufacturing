@@ -20,6 +20,10 @@ const OrderSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: true
+    },
+    timeForService: {
+        type: Number,
+        default: 1
     }
 });
 

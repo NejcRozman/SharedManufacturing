@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { useGlobalContext} from "../../context/context";
 import BarChart from '../misc/BarChart';
+import ToggleSwitch from '../misc/ToggleSwitch';
 
 
 const Trade = () => {
@@ -12,25 +13,26 @@ const Trade = () => {
     const [modifiedDataArray2, setModifiedDataArray2] = useState([]);
     const [modifiedDataArray3, setModifiedDataArray3] = useState([]);
 
-    /*const sortArray = async (array) => {
-        let namesArray = [];
-        for (const item of array) {
-            if (! await namesArray.includes(item.playerName)) {
-                await namesArray.push(item.playerName);
-            }
-        }
-        let finalArray = await Promise.all(namesArray.map( async (item) => {
-            let index = 0;
-            let orders = await array.filter(order => order.playerName === item);
-            orders = await orders.map((order) => {
-                index = index +1;
-                order.playerName = order.playerName+(index).toString();
-                return order;
-            });
-            return orders;
-        }));
-        return finalArray.flat();
-    };*/
+    const [checked1, setChecked1] = useState(false);
+    const [checked2, setChecked2] = useState(false);
+    const [checked3, setChecked3] = useState(false);
+
+    const handleChange1 = nextChecked => {
+        setChecked1(nextChecked);
+    };
+
+    const handleChange2 = nextChecked => {
+        setChecked2(nextChecked);
+    };
+
+    const handleChange3 = nextChecked => {
+        setChecked3(nextChecked);
+    };
+
+    const millisToFloat = (millis) => {
+        const time = millis/60000;
+        return time.toFixed(2);
+    };
 
 
     useEffect(() => {
@@ -38,28 +40,71 @@ const Trade = () => {
             let array1 = await gameData.orders.filter(item => item.typeOfService === gameData.player.typeOfOtherService1);
             let array2 = await gameData.orders.filter(item => item.typeOfService === gameData.player.typeOfOtherService2);
             let array3 = await gameData.orders.filter(item => item.typeOfService === gameData.player.typeOfService);
-            await array1.forEach((item) => {
-                item.price = parseFloat(item.price);
-                item.color= '#1E90FF';
-            });
-            await array2.forEach((item) => {
-                item.price = parseFloat(item.price);
-                item.color= 'green';
-            });
-            await array3.forEach((item) => {
-                item.price = parseFloat(item.price);
-                if (item.playerName === gameData.player.playerName) {
-                    item.color= '#FFD700';
-                } else {
-                    item.color= "#FF8C00";
-                }
-            });
-            await array1.sort((a, b) => parseInt(a.price) - parseInt(b.price));
-            await array2.sort((a, b) => parseInt(a.price) - parseInt(b.price));
-            await array3.sort((a, b) => parseInt(a.price) - parseInt(b.price));
-            setDataArray1(array1);
-            setDataArray2(array2);
-            setDataArray3(array3);
+            if (checked1) {
+                await array1.forEach((item) => {
+                    item.price = parseInt(item.price);
+                    item.color = '#1E90FF';
+                });
+                await array1.sort((a, b) => a.timeForService - b.timeForService);
+                await array1.forEach((item) => {
+                    item.height = millisToFloat(item.timeForService);
+                });
+                setDataArray1(array1);
+
+            } else {
+                await array1.forEach((item) => {
+                    item.price = parseInt(item.price);
+                    item.color = '#1E90FF';
+                });
+                await array1.sort((a, b) => a.price - b.price);
+                setDataArray1(array1);
+            }
+            if (checked2) {
+                await array2.forEach((item) => {
+                    item.price = parseInt(item.price);
+                    item.color = 'green';
+                });
+                await array2.sort((a, b) => a.timeForService - b.timeForService);
+                await array2.forEach((item) => {
+                    item.height = millisToFloat(item.timeForService);
+                });
+                setDataArray2(array2);
+
+            } else {
+                await array2.forEach((item) => {
+                    item.price = parseInt(item.price);
+                    item.color = 'green';
+                });
+                await array2.sort((a, b) => a.price - b.price);
+                setDataArray2(array2);
+            }
+
+            if (checked3) {
+                await array3.forEach((item) => {
+                    item.price = parseInt(item.price);
+                    if (item.playerName === gameData.player.playerName) {
+                        item.color = '#FFD700';
+                    } else {
+                        item.color = "#FF8C00";
+                    }
+                });
+                await array3.sort((a, b) => a.timeForService - b.timeForService);
+                await array3.forEach((item) => {
+                    item.height = millisToFloat(item.timeForService);
+                });
+                setDataArray3(array3);
+            } else {
+                await array3.forEach((item) => {
+                    item.price = parseInt(item.price);
+                    if (item.playerName === gameData.player.playerName) {
+                        item.color = '#FFD700';
+                    } else {
+                        item.color = "#FF8C00";
+                    }
+                });
+                await array3.sort((a, b) => a.price - b.price);
+                setDataArray3(array3);
+            }
             let modifiedArray1 = await array1.map((item) => {
                if (item.price < 1) {
                    return {...item, price: 0.9};
@@ -86,7 +131,7 @@ const Trade = () => {
             setModifiedDataArray3(modifiedArray3);
         };
         sortDataArrays();
-    }, [gameData]);
+    }, [gameData, checked1, checked2, checked3]);
 
     return (
         <>
@@ -94,28 +139,31 @@ const Trade = () => {
                 <div className="other-services-trade-container">
                     <div className="chart-container">
                         <div className="chart-container-text">
-                            <h3>Service {`${gameData.player.typeOfOtherService1}`}</h3>
+                            <h3>{`${gameData.player.typeOfOtherService1}`}</h3>
                         </div>
+                        <ToggleSwitch checked={checked1} onChange={handleChange1}/>
                         <div className="chart-container-chart">
-                            <BarChart dataArray={dataArray1} modifiedData={modifiedDataArray1}/>
+                            <BarChart dataArray={dataArray1} modifiedData={modifiedDataArray1} checked={checked1}/>
                         </div>
                     </div>
                     <div className="chart-container">
                         <div className="chart-container-text">
-                            <h3>Service {`${gameData.player.typeOfOtherService2}`}</h3>
+                            <h3>{`${gameData.player.typeOfOtherService2}`}</h3>
                         </div>
+                        <ToggleSwitch checked={checked2} onChange={handleChange2}/>
                         <div className="chart-container-chart">
-                            <BarChart dataArray={dataArray2} modifiedData={modifiedDataArray2}/>
+                            <BarChart dataArray={dataArray2} modifiedData={modifiedDataArray2} checked={checked2}/>
                         </div>
                     </div>
                 </div>
                 <div className="my-service-trade-container">
                     <div className="chart-container">
                         <div className="chart-container-text">
-                            <h3>Service {`${gameData.player.typeOfService}`}</h3>
+                            <h3>{`${gameData.player.typeOfService}`}</h3>
                         </div>
+                        <ToggleSwitch checked={checked3} onChange={handleChange3}/>
                         <div className="chart-container-chart">
-                            <BarChart dataArray={dataArray3} modifiedData={modifiedDataArray3}/>
+                            <BarChart dataArray={dataArray3} modifiedData={modifiedDataArray3} checked={checked3}/>
                         </div>
                     </div>
                 </div>

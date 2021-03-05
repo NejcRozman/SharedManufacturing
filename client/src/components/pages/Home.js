@@ -4,7 +4,6 @@ import {useGlobalContext} from "../../context/context";
 import Sidebar from '../layout/Sidebar';
 import Modal from '../misc/Modal';
 import Stats from '../misc/Stats';
-import StakeModal from '../misc/StakeModal';
 
 
 const Home = () => {
@@ -15,12 +14,12 @@ const Home = () => {
         const checkLoggedInAndGame = async () => {
             let token = localStorage.getItem("auth-token");
             let playerId = localStorage.getItem("playerId");
-            if (token !== (null || "") && playerId !== (null || "")) {
+            if ((token === null || token === "") && (playerId === null || playerId === "")) {
+                setModalContent('Please log in!');
+            } else {
                 if (!isGameOn) {
                     setModalContent('Wait for the admin to start the game!');
                 }
-            } else {
-                setModalContent('Please log in!');
             }
         };
         checkLoggedInAndGame();
@@ -43,7 +42,6 @@ const Home = () => {
                                                 <Stats/>
                                             </div>
                                         </div>
-                                        <StakeModal/>
                                     </div>
                                 ) : (
                                     <>

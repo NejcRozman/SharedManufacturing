@@ -37,10 +37,6 @@ const PlayerSchema = new mongoose.Schema({
         type: Number,
         default: 1
     },
-    serviceTimestamp: {
-        type: Number,
-        default: 1
-    },
     amountOfOtherService1: {
         type: Number,
         default: 0
@@ -59,12 +55,16 @@ const PlayerSchema = new mongoose.Schema({
     },
     stake: {
         type: Number,
-        default: 0
-    },
-    previousAmountOfAvailableService: {
-        type: Number,
         default: 1
     },
+    fromStakeBalance: {
+        type: Number,
+        default: 0
+    },
+    fromServiceBalance: {
+        type: Number,
+        default: 0
+    }
     /*price: {
         type: Map,
         default: {}

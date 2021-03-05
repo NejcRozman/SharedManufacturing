@@ -3,6 +3,7 @@ import {
     FaHome,
     FaUserFriends,
     FaChartPie,
+    FaChartBar
 } from 'react-icons/fa';
 export const links = [
     {
@@ -22,5 +23,11 @@ export const links = [
         url: '/blockchain',
         text: 'Blockchain',
         icon: <FaChartPie />,
+    },
+    {
+        id: 4,
+        url: '/ranking',
+        text: 'Ranking',
+        icon: <FaChartBar />,
     }
 ];

@@ -11,8 +11,8 @@ const BlockchainData = () => {
     const { gameData } = useGlobalContext();
     const [chartDataArray, setChartDataArray] = useState([]);
     const [relativeStake, setRelativeStake] = useState(0);
-    const [newStake, setNewStake] = useState(0);
-    const [txFee, setTxFee] = useState();
+    const [newStake, setNewStake] = useState("0");
+    const [txFee, setTxFee] = useState("0");
     const [showAlert, setShowAlert] = useState(false);
     const [alertContent, setAlertContent] = useState('');
 
@@ -27,15 +27,15 @@ const BlockchainData = () => {
                 setAlertContent('You must enter a value');
                 setShowAlert(true);
             } else {
-                if ((isNaN(txFee) || txFee <= 0) || (isNaN(newStake) || newStake <= 0)) {
-                    setAlertContent('Amount and tx fee must be a positive number bigger than 0');
+                if ((isNaN(txFee) || txFee < 0) || (isNaN(newStake) || newStake < 0)) {
+                    setAlertContent('Amount and tx fee cannot be a negative number');
                     setShowAlert(true);
                 } else {
-                    if ((countDecimals(txFee) > 1) || (countDecimals(newStake) > 1)) {
-                        setAlertContent('Input value can have at most one decimal place');
+                    if (countDecimals(txFee) > 0 || countDecimals(newStake) > 0)  {
+                        setAlertContent('Input value must be an integer');
                         setShowAlert(true);
                     } else {
-                        if (parseFloat(newStake)+parseFloat(txFee) > gameData.player.balance) {
+                        if (parseInt(newStake) + parseInt(txFee) > gameData.player.balance) {
                             setAlertContent('Amount + TxFee is bigger than balance');
                             setShowAlert(true);
                         } else {
@@ -51,10 +51,10 @@ const BlockchainData = () => {
                                 }
                             };
                             const confirmRes =  await Axios.post(`/player/stake/${playerId}`, data, options);
-                            setNewStake(0);
+                            setNewStake("0");
                             setAlertContent('');
                             setShowAlert(false);
-                            setTxFee();
+                            setTxFee("0");
                             document.getElementById("inputHolder").value= "";
                             document.getElementById("amountHolder").value= "";
                         }
@@ -73,16 +73,16 @@ const BlockchainData = () => {
                 setAlertContent('You must enter a value');
                 setShowAlert(true);
             } else {
-                if ((isNaN(txFee) || txFee <= 0) || (isNaN(newStake) || newStake <= 0)) {
-                    setAlertContent('Amount and tx fee must be a positive number bigger than 0');
+                if ((isNaN(txFee) || txFee < 0) || (isNaN(newStake) || newStake <= 0)) {
+                    setAlertContent('Amount and tx fee cannot be a negative number');
                     setShowAlert(true);
                 } else {
-                    if ((countDecimals(txFee) > 1) || (countDecimals(newStake) > 1)) {
-                        setAlertContent('Input value can have at most one decimal place');
+                    if (countDecimals(txFee) > 0 || countDecimals(newStake) > 0) {
+                        setAlertContent('Input value must be an integer');
                         setShowAlert(true);
                     } else {
-                        if (parseFloat(newStake) > gameData.player.stake) {
-                            setAlertContent('Amount is bigger than your stake');
+                        if ((parseInt(newStake) + 1) > gameData.player.stake) {
+                            setAlertContent('Amount is bigger than your stake (minimum value is 1)');
                             setShowAlert(true);
                         } else {
                             const token = localStorage.getItem("auth-token");
@@ -97,10 +97,10 @@ const BlockchainData = () => {
                                 }
                             };
                             const confirmRes =  await Axios.post(`/player/unstake/${playerId}`, data, options);
-                            setNewStake(0);
+                            setNewStake("0");
                             setAlertContent('');
                             setShowAlert(false);
-                            setTxFee();
+                            setTxFee("0");
                             document.getElementById("inputHolder").value= "";
                             document.getElementById("amountHolder").value= "";
                         }
@@ -113,18 +113,42 @@ const BlockchainData = () => {
         }
     };
 
+    const changeStakeInput = async (e) => {
+        try {
+            if (e.target.value === "") {
+                setNewStake("0");
+            } else {
+                setNewStake(e.target.value)
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    };
+
+    const changeFeeInput = async (e) => {
+        try {
+            if (e.target.value === "") {
+                setTxFee("0");
+            } else {
+                setTxFee(e.target.value)
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    };
+
     useEffect(() => {
         const createDataArray = async () => {
             const dataArray = await gameData.players.map((item) => {
                 return({
                     id: item.playerName,
-                    value: parseInt(item.stake)
+                    value: item.stake
                 });
             });
             setChartDataArray(dataArray);
         };
         createDataArray();
-        let newRelativeStake = Math.floor((gameData.player.stake / gameData.totalStake) * 100);
+        let newRelativeStake = ((gameData.player.stake / gameData.totalStake) * 100).toFixed(1);
         setRelativeStake(newRelativeStake);
     }, [gameData]);
 
@@ -148,13 +172,13 @@ const BlockchainData = () => {
                                 <div className={"modal-input-group"}>
                                     <label htmlFor={"Amount"}>Amount</label>
                                     <div className="modal-input-group-container">
-                                        <input style={{backgroundColor: "#dbdbdb"}} type={"text"} name={"amount"} id={"amountHolder"} placeholder={"Enter amount"} onChange={e => setNewStake(e.target.value)}/>
+                                        <input style={{backgroundColor: "#dbdbdb"}} type={"text"} name={"amount"} id={"amountHolder"} placeholder={"Enter amount"} onChange={e => changeStakeInput(e)}/>
                                     </div>
                                 </div>
                                 <div className={"modal-input-group"}>
                                     <label htmlFor={"txFee"}>Tx Fee</label>
                                     <div className="modal-input-group-container">
-                                        <input style={{backgroundColor: "#dbdbdb"}} type={"text"} name={"txFee"} id={"inputHolder"} placeholder={"Enter tx fee"} onChange={e => setTxFee(e.target.value)}/>
+                                        <input style={{backgroundColor: "#dbdbdb"}} type={"text"} name={"txFee"} id={"inputHolder"} placeholder={"Enter tx fee"} onChange={e => changeFeeInput(e)}/>
                                     </div>
                                 </div>
                                 <div className={`${showAlert? 'modal-input-alert show-modal-input-alert' : 'modal-input-alert'}`}>

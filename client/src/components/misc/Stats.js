@@ -2,11 +2,13 @@ import React, {useState, useEffect} from 'react'
 import { useGlobalContext} from "../../context/context";
 import balanceImg from '../../assets/balance.png';
 import stakeImg from '../../assets/stake.png';
+import ServiceBar from './ServiceBar';
+import ServiceLoading from './ServiceLoading';
 
 const Stats = () => {
     const { gameData } = useGlobalContext();
-    const [serviceCompleted, setServiceCompleted] = useState(0);
     const [relativeStake, setRelativeStake] = useState(0);
+    const [serviceDataArray, setServiceDataArray] = useState([]);
 
     function millisToMinutesAndSeconds(millis) {
         let d = new Date(1000*Math.round(millis/1000));
@@ -18,14 +20,28 @@ const Stats = () => {
     }
 
     useEffect(() => {
-        if (gameData.player.amountOfAvailableService === 0) {
-            let newServiceCompleted = Math.floor(((Date.now() - gameData.player.serviceTimestamp) / gameData.player.timeForService) * 100);
-            setServiceCompleted(newServiceCompleted);
-        } else {
-            setServiceCompleted(100);
-        }
-        let newRelativeStake = Math.floor((gameData.player.stake / gameData.totalStake) * 100);
+        let newRelativeStake = ((gameData.player.stake / gameData.totalStake) * 100).toFixed(1);
         setRelativeStake(newRelativeStake);
+        const renderServiceData = async () => {
+            const services = await gameData.services.filter(service => service.consumer === gameData.player._id);
+            const serviceArray = await Promise.all(services.map(async (item) => {
+                let { consumer, provider, typeOfService, serviceTimestamp, timeForService } = item;
+                const consumerObject = await gameData.players.filter(player => player._id === consumer);
+                const providerObject = await gameData.players.filter(player => player._id === provider);
+                return (
+                    {
+                        id: item._id,
+                        consumer: consumerObject[0].playerName,
+                        provider: providerObject[0].playerName,
+                        typeOfService: typeOfService,
+                        serviceTimestamp: serviceTimestamp,
+                        timeForService: timeForService
+                    }
+                )
+            }));
+            setServiceDataArray(serviceArray);
+        };
+        renderServiceData();
     }, [gameData]);
 
     return (
@@ -41,22 +57,12 @@ const Stats = () => {
                 </div>
                 <div className="grid-item-stats">
                     <div className="time-value">
-                        <h2>Service {gameData.player.typeOfService}</h2>
+                        <h2>{gameData.player.typeOfService}</h2>
                     </div>
                     <div className={`${gameData.player.amountOfAvailableService === 1 ? 'time-value-available' : 'time-value-unavailable'}`}>
                         <h2>{gameData.player.amountOfAvailableService === 1 ? 'Available' : 'Unavailable'}</h2>
                     </div>
-                    <div className="time-container">
-                        <div className="bar-container">
-                            <div className="bar-filler" style={{width: `${serviceCompleted}%`}}>
-                                <span className="bar-label">{`${serviceCompleted}%`}</span>
-                            </div>
-                            <div className="bottom">
-                                <p>Time for service = {millisToMinutesAndSeconds(gameData.player.timeForService)}</p>
-                                <i></i>
-                            </div>
-                        </div>
-                    </div>
+                    <ServiceBar/>
                 </div>
                 <div className="grid-item-stats">
                     <div className="stake-image">
@@ -71,7 +77,7 @@ const Stats = () => {
                 </div>
                 <div className="grid-item-stats">
                     <div className="upgrade-value">
-                        <h2>Upgrade</h2>
+                        <h3>Number of upgrades: {gameData.player.upgradeNumber}</h3>
                     </div>
                     <div className="upgrade-container">
                         <div className={`${(gameData.player.amountOfOtherService1 > 0) ? 'upgrade-container-green' : 'upgrade-container-red'}`}>
@@ -89,6 +95,16 @@ const Stats = () => {
                             <p>{`${gameData.player.typeOfOtherService1}`} + {`${gameData.player.typeOfOtherService2}`} = &#8681; {millisToMinutesAndSeconds(gameData.player.timeForService - gameData.player.nextTimeForService)}</p>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className="services-container">
+                <h3>Purchased Services</h3>
+                <div className="loading-services-container">
+                    {
+                        serviceDataArray.map((item) => (
+                            <ServiceLoading item={item} key={item.id}/>
+                        ))
+                    }
                 </div>
             </div>
         </>

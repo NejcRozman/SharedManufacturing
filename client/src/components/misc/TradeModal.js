@@ -5,7 +5,7 @@ import Axios from "axios/index";
 
 const TradeModal = () => {
     const { gameData, isTradeModalOpen, closeTradeModal, tradeModalContent } = useGlobalContext();
-    const [txFee, setTxFee] = useState();
+    const [txFee, setTxFee] = useState("0");
     const [showAlert, setShowAlert] = useState(false);
     const [alertContent, setAlertContent] = useState('');
     const [tableDataArray, setTableDataArray] = useState([]);
@@ -22,14 +22,14 @@ const TradeModal = () => {
                 setShowAlert(true);
             } else {
                 if (isNaN(txFee) || txFee < 0) {
-                    setAlertContent('Input must be a positive number');
+                    setAlertContent('Input cannot be a negative number');
                     setShowAlert(true);
                 } else {
-                    if (countDecimals(txFee) > 1) {
-                        setAlertContent('Input value can have at most one decimal place');
+                    if (countDecimals(txFee) > 0) {
+                        setAlertContent('Input value must be an integer');
                         setShowAlert(true);
                     } else {
-                        if (parseFloat(tradeModalContent.price)+parseFloat(txFee) > gameData.player.balance) {
+                        if (parseInt(tradeModalContent.price) + parseInt(txFee) > gameData.player.balance) {
                             setAlertContent('Price and TxFee is higher than balance');
                             setShowAlert(true);
                         } else {
@@ -37,7 +37,7 @@ const TradeModal = () => {
                             const playerId = localStorage.getItem("playerId");
                             const data = {
                                 orderId: tradeModalContent._id,
-                                txFee: parseFloat(txFee)
+                                txFee: txFee
                             };
                             const options = {
                                 headers: {
@@ -62,9 +62,21 @@ const TradeModal = () => {
         }
     };
 
+    const changeFeeInput = async (e) => {
+        try {
+            if (e.target.value === "") {
+                setTxFee("0");
+            } else {
+                setTxFee(e.target.value)
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    };
+
     useEffect(() => {
         const renderTableData = async () => {
-            const transactions = await gameData.allPendingTransactions.sort((a, b) => parseInt(b.txFee) - parseInt(a.txFee));
+            const transactions = await gameData.allPendingTransactions.sort((a, b) => b.txFee - a.txFee);
             const transactionsArray = await Promise.all(transactions.map(async (item) => {
                 let { consumer, provider, typeOfService, amountOfService, price, txFee } = item;
                 const consumerObject = await gameData.players.filter(player => player._id === consumer);
@@ -119,7 +131,7 @@ const TradeModal = () => {
                         <div className={"trade-modal-input-group"}>
                             <label htmlFor={"txFee"}>Tx Fee</label>
                             <div className="trade-modal-input-group-container">
-                                <input type={"text"} name={"txFee"} id={"inputHolder"} placeholder={"Enter tx fee"} onChange={e => setTxFee(e.target.value)}/>
+                                <input type={"text"} name={"txFee"} id={"inputHolder"} placeholder={"Enter tx fee"} onChange={e => changeFeeInput(e)}/>
                             </div>
                         </div>
                         <div className={`${showAlert? 'trade-modal-input-alert show-trade-modal-input-alert' : 'trade-modal-input-alert'}`}>

@@ -9,6 +9,7 @@ const AppProvider = ({children}) => {
     const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
     const [isCancelOrderModalOpen, setIsCancelOrderModalOpen] = useState(false);
     const [isCreateOrderModalOpen, setIsCreateOrderModalOpen] = useState(false);
+    const [isAlertOpen, setIsAlertOpen] = useState(false);
 
     const [modalContent, setModalContent] = useState('');
     const [confirmModalContent, setConfirmModalContent] = useState('');
@@ -72,6 +73,13 @@ const AppProvider = ({children}) => {
         setIsCreateOrderModalOpen(false);
     };
 
+    const openAlert = () => {
+        setIsAlertOpen(true);
+    };
+    const closeAlert = () => {
+        setIsAlertOpen(false);
+    };
+
 
     return (
         <AppContext.Provider value={{
@@ -102,7 +110,10 @@ const AppProvider = ({children}) => {
             isCancelOrderModalOpen,
             openCreateOrderModal,
             closeCreateOrderModal,
-            isCreateOrderModalOpen
+            isCreateOrderModalOpen,
+            isAlertOpen,
+            openAlert,
+            closeAlert
         }}>
             {children}
         </AppContext.Provider>

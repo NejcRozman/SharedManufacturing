@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import ReactTooltip from 'react-tooltip';
 import { useGlobalContext} from "../../context/context";
 import { FaTimes } from 'react-icons/fa';
+import MiningBar from './MiningBar';
 
 
 const TransactionsTable = () => {
@@ -26,7 +27,7 @@ const TransactionsTable = () => {
 
     useEffect(() => {
         const renderTableData = async () => {
-            const transactions = await gameData.allPendingTransactions.sort((a, b) => parseFloat(b.txFee) - parseFloat(a.txFee));
+            const transactions = await gameData.allPendingTransactions.sort((a, b) => parseInt(b.txFee) - parseInt(a.txFee));
             const transactionsArray = await Promise.all(transactions.map(async (item) => {
                 let { consumer, provider, typeOfService, amountOfService, price, txFee } = item;
                 const consumerObject = await gameData.players.filter(player => player._id === consumer);
@@ -79,15 +80,7 @@ const TransactionsTable = () => {
     return (
         <>
             <div className="pending-transactions-container">
-                <div className="mining-progress-container">
-                    <div className="mining-progress-flex">
-                        <p>Mining</p>
-                        <div className="mining-progress">
-                            <div className="mining-progress-filler" style={{width: `${width}%`}}></div>
-                        </div>
-                    </div>
-                    <span className="mining-progress-text">Time left: {timeLeft}</span>
-                </div>
+                <MiningBar/>
                 <div className="table-pending-transactions-container">
                     <table className="table-pending-transactions">
                         <thead>
@@ -117,9 +110,9 @@ const TransactionsTable = () => {
                                             </button>
                                             :''}
                                     </td>
-                                    <td>{item.txFee}</td>
+                                    <td>{item.txFee.toFixed(1)}</td>
                                     <td className="table-pending-transactions-tooltip">
-                                        <ReactTooltip className="table-pending-transactions-head-tooltip-react" id={item.id} place="bottom" type="dark" effect="solid">
+                                        <ReactTooltip id={item.id} place="bottom" type="dark" effect="solid">
                                             <ul>
                                                 <li>Consumer: {item.consumer}</li>
                                                 <li>Provider: {item.provider}</li>

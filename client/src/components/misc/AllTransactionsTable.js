@@ -7,7 +7,7 @@ const AllTransactionsTable = () => {
     const [tableDataArray, setTableDataArray] = useState([]);
     const [sortBy, setSortBy] = useState('time');
     const [orderOfSort, setOrderOfSort] = useState('ascending');
-    const [checkBoxes, setCheckBoxes] = useState([{type: "A", isChecked: false}, {type: "B", isChecked: false}, {type: "C", isChecked: false}, {type: "Stake", isChecked: false}, {type: "Unstake", isChecked: false}]);
+    const [checkBoxes, setCheckBoxes] = useState([{type: "Mechanical service", isChecked: false}, {type: "Electrical service", isChecked: false}, {type: "IT service", isChecked: false}, {type: "Stake", isChecked: false}, {type: "Unstake", isChecked: false}]);
 
     const displayTime = async (time) => {
         const createdMillis = await new Date(time);
@@ -59,15 +59,15 @@ const AllTransactionsTable = () => {
             });
         } if (sortBy === 'price') {
             if (orderOfSort === "descending") {
-                return await dataArray.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+                return await dataArray.sort((a, b) => parseInt(b.price) - parseInt(a.price));
             } if (orderOfSort === "ascending") {
-                return await dataArray.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+                return await dataArray.sort((a, b) => parseInt(a.price) - parseInt(b.price));
             }
         } if (sortBy === 'txFee') {
             if (orderOfSort === "descending") {
-                return await dataArray.sort((a, b) => parseFloat(b.txFee) - parseFloat(a.txFee));
+                return await dataArray.sort((a, b) => parseInt(b.txFee) - parseInt(a.txFee));
             } if (orderOfSort === "ascending") {
-                return await dataArray.sort((a, b) => parseFloat(a.txFee) - parseFloat(b.txFee));
+                return await dataArray.sort((a, b) => parseInt(a.txFee) - parseInt(b.txFee));
             }
         }
     };
@@ -131,7 +131,7 @@ const AllTransactionsTable = () => {
             setTableDataArray(dataArray);
         };
         renderTableData();
-    }, [gameData]);
+    }, [gameData, checkBoxes, orderOfSort]);
 
 
     return (

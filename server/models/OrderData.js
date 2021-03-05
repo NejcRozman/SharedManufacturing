@@ -21,6 +21,10 @@ const OrderDataSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    timeForService: {
+        type: Number,
+        default: 1
+    },
     createdAt: {
         type: Date,
         default: Date.now,

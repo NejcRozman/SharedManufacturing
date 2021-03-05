@@ -92,10 +92,10 @@ exports.start_game = async (req, res, next) => {
             if (validator.isInt(req.body.timeForBlock) && validator.isFloat(req.body.exponent)) {
                 blockchain.timeForBlock = req.body.timeForBlock;
                 production.exponent = -req.body.exponent;
+                req.io.emit("start", Date.now());
                 await Admin.findByIdAndUpdate(req.body.adminId, {gameIsOn: true, miningTime: Date.now()});
-                let startProduction = await production.startProduction();
-                let startBlockchain = await blockchain.startBlockchain();
-                //let startBlockchain = true;
+                let startProduction = await production.startProduction(req.io, req.playerSockets, req.queue);
+                let startBlockchain = await blockchain.startBlockchain(req.io, req.playerSockets, req.queue);
                 if (startProduction && startBlockchain) {
                     res.status(201).json({
                         message: "Game started"
@@ -121,17 +121,12 @@ exports.start_game = async (req, res, next) => {
 
 exports.end_game = async (req, res, next) => {
     try {
-        if (req.body.adminId !== undefined) {
-            await Admin.findByIdAndUpdate(req.body.adminId, {gameIsOn: false});
-            await production.endProduction();
-            await blockchain.endBlockchain();
-            res.status(201).json({
-                message: "Game is finished"
-            });
-        } else {
-            res.status(400).json({
-                error: 'Body must have property adminId'
-            });
+        const code = await q_end_game(req);
+        if (code === 201) {
+            res.status(201).json({message: 'Game is finished'});
+        }
+        if (code === 400) {
+            res.status(400).json({ message: "Body must have property adminId" });
         }
     } catch (err) {
         console.log(err);
@@ -139,4 +134,18 @@ exports.end_game = async (req, res, next) => {
             error: err
         });
     }
+};
+
+q_end_game = async (req) => {
+    return req.queue.add(async () => {
+        if (req.body.adminId !== undefined) {
+            req.io.emit("end", false);
+            await Admin.findByIdAndUpdate(req.body.adminId, {gameIsOn: false});
+            await production.endProduction();
+            await blockchain.endBlockchain();
+            return 201;
+        } else {
+            return 400;
+        }
+    });
 };

@@ -5,7 +5,7 @@ import Axios from "axios/index";
 
 const CreateOrderModal = () => {
     const { gameData, isCreateOrderModalOpen, closeCreateOrderModal } = useGlobalContext();
-    const [price, setPrice] = useState();
+    const [price, setPrice] = useState("0");
     const [showAlert, setShowAlert] = useState(false);
     const [alertContent, setAlertContent] = useState('');
 
@@ -24,12 +24,12 @@ const CreateOrderModal = () => {
                     setAlertContent('Input must be a non-negative number');
                     setShowAlert(true);
                 } else {
-                    if (countDecimals(price) > 1) {
-                        setAlertContent('Input value can have at most one decimal place');
+                    if (countDecimals(price) > 0) {
+                        setAlertContent('Input value must be an integer');
                         setShowAlert(true);
                     } else {
-                        if (parseFloat(price) > 3000) {
-                            setAlertContent('Maximum price in this game is 3000');
+                        if (parseInt(price) > 30000) {
+                            setAlertContent('Maximum price in this game is 30000');
                             setShowAlert(true);
                         } else {
                             if (gameData.player.amountOfAvailableService === 0) {
@@ -66,6 +66,18 @@ const CreateOrderModal = () => {
         }
     };
 
+    const changePriceInput = async (e) => {
+        try {
+            if (e.target.value === "") {
+                setPrice("0");
+            } else {
+                setPrice(e.target.value)
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    };
+
 
     return (
         <div
@@ -78,7 +90,7 @@ const CreateOrderModal = () => {
                 <div className={"modal-input-group"}>
                     <label htmlFor={"price"}>Price</label>
                     <div className="modal-input-group-container">
-                        <input type={"text"} name={"price"} id={"priceInput"} placeholder={"Enter price"} onChange={e => setPrice(e.target.value)}/>
+                        <input type={"text"} name={"price"} id={"priceInput"} placeholder={"Enter price"} onChange={e => changePriceInput(e)}/>
                     </div>
                 </div>
                 <div className={`${showAlert? 'modal-input-alert show-modal-input-alert' : 'modal-input-alert'}`}>
