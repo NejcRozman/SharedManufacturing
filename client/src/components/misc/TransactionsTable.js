@@ -110,7 +110,7 @@ const TransactionsTable = () => {
                                             </button>
                                             :''}
                                     </td>
-                                    <td>{item.txFee.toFixed(1)}</td>
+                                    <td>{item.txFee}</td>
                                     <td className="table-pending-transactions-tooltip">
                                         <ReactTooltip id={item.id} place="bottom" type="dark" effect="solid">
                                             <ul>
