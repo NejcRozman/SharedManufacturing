@@ -8,9 +8,9 @@ const queue = new PQueue({ concurrency: 1 });
 
 const app = express();
 
-//const server = require('http').Server(app);
+const server = require('http').Server(app);
 
-const https = require('https');
+/*const https = require('https');
 const fs = require('fs');
 const privateKey = fs.readFileSync('/etc/letsencrypt/live/sharedmanufacturing.ldse.si/privkey.pem', 'utf8'); // key
 const certificate = fs.readFileSync('/etc/letsencrypt/live/sharedmanufacturing.ldse.si/cert.pem', 'utf8'); // certificate
@@ -20,13 +20,13 @@ const credentials = {
     cert: certificate,
     ca: ca
 };
-const server = https.createServer(credentials, app);
+const server = https.createServer(credentials, app);*/
 
 const io = require('socket.io')(server, {
     wsEngine: 'ws',
     cors: {
-        origin: "https://sharedmanufacturing.ldse.si",
-        //origin: "http://localhost:3000",
+        //origin: "https://sharedmanufacturing.ldse.si",
+        origin: "http://localhost:3000",
         methods: ["GET", "POST"]
     }
 });

@@ -47,7 +47,7 @@ class Blockchain {
                             typeOfTransaction: max.typeOfTransaction,
                             orderId: max.orderId,
                         });
-                        ioSocket.emit("delete_transaction", max._id.toHexString());
+                        ioSocket.emit("delete_transaction", max._id.toHexString(), true);
                         ioSocket.emit("add_allTransaction", transactionData);
                         await transactionData.save();
                         await Transaction.findByIdAndDelete(max._id);

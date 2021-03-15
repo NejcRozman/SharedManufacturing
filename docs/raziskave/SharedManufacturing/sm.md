@@ -17,13 +17,19 @@ Ključen del igre je bločno-verižna tehnologija (ang. blockchain), ki je plač
 - Čas trajanja: Igra traja približno dve uri in igralci ne vedo koliko časa je še do konca.
 - Začetek igre: Vsi igralci začnejo z enakimi začetnimi nastavitvami (denar, razvitost proizvodnje).
 - Komunikacija: Dovoljeno je komuniciranje med igralci v igri po javnih ali zasebnih kanalih.
-- **Nagrada**: Najboljši igralci bodo prejeli nagrado v obliki točk na izpitu iz predmeta X. Nagrada bo razdeljena po sledečem sistemu:
+- **Nagrada**: Najboljši igralci bodo prejeli nagrado v obliki točk na izpitu iz predmeta _Programljivi logični krmilniki_. Nagrada bo razdeljena po sledečem sistemu:
 
 | Uvrstitev  | Nagrada  |
 | :------------: |:---------------:| 
-| 1 | 15% | 
-| 2 | 14% |
-| 3 | 13% |
+| 1. mesto | 10% | 
+| 2. mesto | 9% |
+| 3. mesto | 8% |
+| 1. tretjina\*| 6% | 
+| 2. tretjina | 3% | 
+| Ostali | 0% |
+
+\* Od 4. mesta naprej.
+
 
 ## Uporaba Aplikacije
 
@@ -32,18 +38,21 @@ Ključen del igre je bločno-verižna tehnologija (ang. blockchain), ki je plač
 V aplikacijo se je potrebno prijaviti z dodeljenim uporabniškim imenom in geslom. To storimo tako, da v navigacijski vrstici, zgoraj v desnem kotu, kliknemo na gumb "Login". Ko se nam pojavi vstopna stran, vnesemo podatke in kliknemo na gumb "Login". Pred pričetkom igre je potrebno počakati, da administrator požene igro.
 
 ![Login](./media/Login.gif)
+*<center>Slika 1: Prijava v igro.</center>*
 
 ### Domači zaslon
 
 Ko se igra prične, se vsakemu igralcu prikaže domači zaslon (ang. Home). V osrednjem delu zaslona je pet polj, ki prikazujejo vrednosti pomembnih parametrov igralca in njegove proizvodnje. V prvem je prikazano stanje na računu igralca, najmanjša enota plačilne valute je 1. V drugem polju je prikazana storitev, ki jo igralec ponuja. Pod njo je prikazan status ali je storitev trenutno na voljo ali se izvaja. Prikazuje se tudi čas izvedbe storitve (s kurzorjem se je potrebno pomakniti na zeleno vrstico) in delež opravljene storitve. V tretjem polju je prikazana količina vloženega denarja v vzdrževanje bločno-verižnega omrežja ter relativna vrednost vložka glede na trenutni celotni vložek. V četrtem polju je prikazano število nadgradenj proizvodenj, ki jih je igralec izvedel do sedaj. Prav tako je prikazana količina modulov na računu, ki jih je kupil od ponudnikov preostalih dveh storitev. Prikazan je tudi za koliko se bo zmanjšal čas izvedbe storitve pri naslednji nadgradnji proizvodnje. V petem polju pa se prikazuje potek storitev, ki jih je igralec zakupil. Sočasno lahko igralec zakupi več storitev, ki so lahko enakega tipa. Svojo storitev pa lahko izvaja samo eno naenkrat. 
 
 ![Home](./media/Home.gif)
+*<center>Slika 2: Domači zaslon.</center>*
 
 ### Navigacijski stolpec
 
 Ob strani zaslona je prikazan navigacijski stolpec, ki poleg možnosti navigacije med sklopi (Home, Trade, Blockchain in Ranking), prikazuje tudi prej opisane parametre v skrajšani obliki. Prav tako prikazuje trenutno lestvico petih najboljših igralcev, glede na razvitost proizvodnje. Če je ponujanje storitve trenutno na voljo (zelen AVAILABLE), se pojavi tudi gumb s katerim lahko nastavimo ceno storitve in tako postavimo našo storitev na trg. Ob pritisku na gumb se nam odpre okno kjer lahko nastavimo ceno storitve. Pri tem je potrebno upoštevati pravilni format cene. In sicer je to pozitivno nenegativno število, ki ima lahko eno decimalko. Prav tako je najvišja vrednost cene storitve, ki jo lahko nastavimo omejena z največjo možno količino denarja, ki ga ima lahko igralec na računu (v našem primeru 30000 enot).
 
 ![Sidebar](./media/Sidebar.gif)
+*<center>Slika 3: Uporaba navigacijskega stolpca.</center>*
 
 ### Trgovanje
 
@@ -54,6 +63,7 @@ V kolikor želi igralec odstraniti ponudbo svoje storitve iz trga, to stori tako
 Če pa igralec želi kupiti storitev, ki je trenutno na voljo na trgu, to stori tako, da pritisne na stolpec ponudbe, ki jo želi kupiti. Zopet se odpre pojavno okno, kjer je poleg potrditve akcije potrebno določiti še transakcijske stroške (Tx Fee). Ob strani se v oknu prikazuje tudi trenutna čakalna vrsta transakcij, ki čakajo na vrsto za potrditev. Tako se lahko igralec odloči kam v čakalno vrsto bo umestil transakcijo (večji kot je Tx Fee prej bo transakcija na vrsti). Zopet je potrebno upoštevati format vrednosti, ki jo igralec vnese v okno (podobno kot pri nastavljanju cene storitve).
 
 ![Trade](./media/Trade.gif)
+*<center>Slika 4: Uporaba sklopa trgovanje.</center>*
 
 Po potrditvi se transakcija postavi v čakalno vrsto, sredstva pa se odštejejo iz uporabnikovega računa. V kolikor transakcijo prehiti katera izmed ostalih transakcij, ki želi kupiti isto storitev, se ta transakcija zbriše in sredstva se povrnejo. Pojavi se obvestilo, ki igralca obvesti o izbrisani transakciji.
 
@@ -64,17 +74,21 @@ Transakcije igralec spremlja v sklopu bločno-verižno omrežje (ang. Blockchain
 Vse transakcije, v katerih je udeleže igralec so obarvane rumene, pri čemer pa lahko transakcije, ki jih je ustvaril igralec zbriše tako, da pritisne na rdeči »X« v desnem kotu in to akcijo potrdi v pojavnem oknu. Ko se transakcija zbriše se povrnejo sredstva na račun.
 
 ![Blockchain](./media/Blockchain.gif)
+*<center>Slika 5: Uporaba tabele čakajočih transakcij.</center>*
 
 V tem sklopu je prikazan tudi tortni diagram vlaganja sredstev bločno-verižno omrežje. S pomikom kurzorja na posamezen del diagram, se nam izpiše ime igralca in absolutna vrednost vloženih sredstev. Na desni strani diagram pa je možno izvesti transakcijo za vlaganje ali dviganje sredstev. Zopet je potrebno upoštevati pravilen format vnesenih vrednosti. S pritiskom na gum »Stake« igralec postavi transakcijo v čakalno vrsto za vlaganje sredstev. S pritiskom na gumb »Unstake« pa transakcijo za dvig sredstev.
 
 ![Stake](./media/Stake.gif)
+*<center>Slika 6: Prikaz vlaganja in odvzemanja sredstev iz bločno-verižnega omrežja.</center>*
 
 V spodnjem polju so prikazane vse transakcije, ki so se potrdile do sedaj v igri. Z označevanjem posameznih tipov transakcij, lahko filtriramo tabelo tako, da nam izpiše samo za nas pomembne informacije. Prav tako lahko s pritiskom na ime posameznega stolpca definiramo v katerem vrstnem redu se nam izpisujejo transakcije (npr. po padajoči vrednosti cene).
 
 ![Transactions](./media/Transactions.gif)
+*<center>Slika 7: Uporaba tabele vseh potrjenih transakcij.</center>*
 
 ### Razvrstitev igralcev
 
 Zadnji sklop prikazuje trenutno razvrstitev igralcev glede na stopnjo razvitosti proizvodnje. Prikazano je prav tako trenutno stanje na računu igralcev ter koliko so zaslužili s trgovanjem in koliko z vlaganjem. Ta tabela bo služila na koncu za določitev nagrade, ki jo prejmejo igralci. 
 
 ![Ranking](./media/Ranking.png)
+*<center>Slika 8: Prikaz trenutnega stanja razvrstitve igralcev v igri.</center>*
