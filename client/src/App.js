@@ -12,11 +12,11 @@ import Ranking from './components/pages/Ranking';
 import Error from './components/pages/Error';
 import Axios from "axios/index";
 
-//Axios.defaults.baseURL = 'http://62.171.167.84:8000';
+//Axios.defaults.baseURL = 'https://sharedmanufacturing.ldse.si:8000';
 Axios.defaults.baseURL = 'http://localhost:8000';
 
 function App() {
-    const { setIsGameOn, setGameData, gameData, openAlert } = useGlobalContext();
+    const { setIsGameOn, isGameOn, setGameData, gameData, openAlert } = useGlobalContext();
     const [socket, setSocket] = useState();
 
     const socketConnected = useCallback(() => {
@@ -346,7 +346,7 @@ function App() {
             const token = await localStorage.getItem("auth-token");
             const playerId = await localStorage.getItem("playerId");
             if (!((token === null || token === "") && (playerId === null || playerId === ""))) {
-                /*const newSocket = io('http://62.171.167.84:8000', {
+                /*const newSocket = io('https://sharedmanufacturing.ldse.si:8000', {
                     query: {
                         playerId: playerId
                     },
@@ -367,7 +367,7 @@ function App() {
             }
         };
         connectSocket();
-    }, []);
+    }, [isGameOn]);
 
 
     useEffect(() => {
