@@ -32,7 +32,7 @@ exports.login_admin = (req, res, next) => {
                         },
                         process.env.ADMIN_KEY,
                         {
-                            expiresIn: "1h"
+                            expiresIn: "24h"
                         },
                     );
                     return res.status(200).json({
@@ -62,12 +62,7 @@ exports.create_player = (req, res, next) => {
         } else {
             const player = new Player({
                 playerName: req.body.playerName,
-                password: hash,
-                balance: req.body.balance,
-                typeOfService: req.body.typeOfService,
-                typeOfOtherService1: req.body.typeOfOtherService1,
-                typeOfOtherService2: req.body.typeOfOtherService2,
-                timeForService: req.body.timeForService
+                password: hash
             });
             player
                 .save()
@@ -90,6 +85,36 @@ exports.start_game = async (req, res, next) => {
     try {
         if (req.body.adminId !== undefined) {
             if (validator.isInt(req.body.timeForBlock) && validator.isFloat(req.body.exponent)) {
+                await Player.updateMany({}, {
+                    amountOfAvailableService: 1,
+                    timeForService: 300000,
+                    amountOfOtherService1: 0,
+                    amountOfOtherService2: 0,
+                    upgradeNumber: 0,
+                    balance: 1000,
+                    stake: 1,
+                    fromStakeBalance: 0,
+                    fromServiceBalance: 0
+                });
+                let players = await Player.find();
+                let service = 1;
+                for (let player of players) {
+                    switch (service) {
+                        case 1:
+                            await Player.findByIdAndUpdate(player._id, {typeOfService: "Mechanical service", typeOfOtherService1: "Electrical service", typeOfOtherService2: "IT service"});
+                            service = 2;
+                            break;
+                        case 2:
+                            await Player.findByIdAndUpdate(player._id, {typeOfService: "Electrical service", typeOfOtherService1: "IT service", typeOfOtherService2: "Mechanical service"});
+                            service = 3;
+                            break;
+                        case 3:
+                            await Player.findByIdAndUpdate(player._id, {typeOfService: "IT service", typeOfOtherService1: "Mechanical service", typeOfOtherService2: "Electrical service"});
+                            service = 1;
+                            break;
+                    }
+
+                }
                 blockchain.timeForBlock = req.body.timeForBlock;
                 production.exponent = -req.body.exponent;
                 req.io.emit("start", Date.now());

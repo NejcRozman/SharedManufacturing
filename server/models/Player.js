@@ -10,16 +10,13 @@ const PlayerSchema = new mongoose.Schema({
         required: true,
     },
     typeOfService: {
-        type: String,
-        required: true
+        type: String
     },
     typeOfOtherService1: {
-        type: String,
-        required: true
+        type: String
     },
     typeOfOtherService2: {
-        type: String,
-        required: true
+        type: String
     },
     amountOfAvailableService: {
         type: Number,

@@ -1,4 +1,7 @@
 # SharedManufacturing
+
+Za več informacij: _nejc.rozman@fs.uni-lj.si_
+
 ## _Navodila za uporabo igre_
 
 Tukaj so predstavljena navodila za uporabo aplikacije SharedManufacturing.
@@ -9,7 +12,7 @@ Igra temelji na konceptu Deljene proizvodnje (ang. Shared Manufacturing). Tak na
 
 V tej igri je vsak igralec lastnik proizvodnje (npr. proizvodne naprave, znanja, virov), ki lahko na trg ponudi določeno storitev. V igri obstajajo trije tipi storitve (ang. mechanical, electrical, IT), ki so enakomerno razdeljeni med igralce. S prodajanjem svoje proizvodnje na trgu, igralec pridobi sredstva s katerimi lahko kupuje druge storitve na trgu. S tem ko igralec kupuje ostale storitve na trgu pa si izboljšuje svojo proizvodnjo in tako zmanjša čas v katerem lahko opravlja storitev. Igralec ne more kupiti storitve, ki jo ponuja.
 
-Ključen del igre je bločno-verižna tehnologija (ang. blockchain), ki je plačilni sistem v igri in omogoča izvajanje transakcij. Transakcija nosi informacije o namenu transakcije, količini sredstva ki se prenaša in količini transakcijskih stroškov (ang. transaction fee – tx fee). Transakcije se potrjujejo v določenem časovnem intervalu (npr. 1 transakcija na 10s). Tako se tvori seznam transakcij, ki čakajo da pridejo na vrsto za potrditev. Pri čemer pa je pomembno, da imajo transakcije, ki ponudijo višjo količino transakcijskih stroškov prednost pred ostalimi. Transakcijski stroški se v obliki nagrade porazdelijo med potrjevalce transakcij, ki vzdržujejo bločno-verižno omrežje. Nagrada se deli po principu loterije, za vsako transakcijo se izvede naključno žrebanje med igralci. Večji kot je delež vloženih sredstev v vzdrževanje bločno-verižnega omrežja (ang. stake), večja je verjetnost, da bo igralec bil izžreban za nagrado. Vsak igralec lahko vlaga sredstva v vzdrževanje omrežja ali pa jih odvzame in uporabi drugače. Proces vlaganja in odvzemanja sredstev za vzdrževanje se izvede prav tako v obliki transakcije. Omejitev igre je, da mora vsak igralec imeti vloženo vsaj najmanjšo količino sredstev (1 enoto) tako, da bločno-verižno omrežje sploh lahko obstaja.
+Ključen del igre je bločno-verižna tehnologija (ang. blockchain), ki je plačilni sistem v igri in omogoča izvajanje transakcij. Transakcija nosi informacije o namenu transakcije, količini sredstva ki se prenaša in količini transakcijskih stroškov (ang. transaction fee – tx fee). Transakcije se potrjujejo v določenem časovnem intervalu (npr. 1 transakcija na 10s). Tako se tvori seznam transakcij, ki čakajo da pridejo na vrsto za potrditev. Pri čemer pa je pomembno, da imajo transakcije, ki ponudijo višjo količino transakcijskih stroškov prednost pred ostalimi. Transakcijski stroški se v obliki nagrade porazdelijo med potrjevalce transakcij, ki vzdržujejo bločno-verižno omrežje. Nagrada se deli po principu loterije, za vsako transakcijo se izvede naključno žrebanje med igralci. Večji kot je delež vloženih sredstev v vzdrževanje bločno-verižnega omrežja (ang. stake), večja je verjetnost, da bo igralec izžreban za nagrado. Vsak igralec lahko vlaga sredstva v vzdrževanje omrežja ali pa jih odvzame in uporabi drugače. Proces vlaganja in odvzemanja sredstev za vzdrževanje se izvede prav tako v obliki transakcije. Omejitev igre je, da mora vsak igralec imeti vloženo vsaj najmanjšo količino sredstev (1 enoto) tako, da bločno-verižno omrežje sploh lahko obstaja.
 
 ## Osnovne Informacije
 
@@ -17,18 +20,16 @@ Ključen del igre je bločno-verižna tehnologija (ang. blockchain), ki je plač
 - Čas trajanja: Igra traja približno dve uri in igralci ne vedo koliko časa je še do konca.
 - Začetek igre: Vsi igralci začnejo z enakimi začetnimi nastavitvami (denar, razvitost proizvodnje).
 - Komunikacija: Dovoljeno je komuniciranje med igralci v igri po javnih ali zasebnih kanalih.
-- **Nagrada**: Najboljši igralci bodo prejeli nagrado v obliki točk na izpitu iz predmeta _Programljivi logični krmilniki_. Nagrada bo razdeljena po sledečem sistemu:
+- **Nagrada**: Najboljši igralci bodo prejeli nagrado v obliki točk pri kolokvijih iz predmeta _Programljivi logični krmilniki_. Nagrada bo razdeljena po sledečem sistemu:
 
 | Uvrstitev  | Nagrada  |
 | :------------: |:---------------:| 
-| 1. mesto | 10% | 
-| 2. mesto | 9% |
-| 3. mesto | 8% |
-| 1. tretjina\*| 6% | 
-| 2. tretjina | 3% | 
-| Ostali | 0% |
-
-\* Od 4. mesta naprej.
+| 1. mesto | 10T | 
+| 2. mesto | 9T |
+| 3. mesto | 8T |
+| 4. do 7. mesto| 6T | 
+| 8. do 16. mesto | 3T | 
+| Ostali | 0T |
 
 
 ## Uporaba Aplikacije

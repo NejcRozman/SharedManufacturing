@@ -156,6 +156,17 @@ q_cancel_order = async (req) => {
                             req.io.emit("delete_transaction", transaction._id.toHexString(), false);
                             await Player.findByIdAndUpdate(transaction.consumer._id, {balance: newBalance});
                             await Transaction.findByIdAndDelete(transaction._id);
+                            const deletedTransaction = await new DeletedTransaction({
+                                consumer: transaction.consumer,
+                                provider: transaction.provider,
+                                typeOfService: transaction.typeOfService,
+                                amountOfService: transaction.amountOfService,
+                                price: transaction.price,
+                                txFee: transaction.txFee,
+                                typeOfTransaction: transaction.typeOfTransaction,
+                                orderId: transaction.orderId
+                            });
+                            await deletedTransaction.save();
                         }
                     }
                     await Order.findByIdAndDelete(id);

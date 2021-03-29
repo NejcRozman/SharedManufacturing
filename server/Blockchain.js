@@ -4,6 +4,7 @@ const Player = require('./models/Player');
 const Order = require('./models/Order');
 const Service = require('./models/Service');
 const Admin = require('./models/Admin');
+const DeletedTransaction = require('./models/DeletedTransaction');
 const {default: PQueue} = require("p-queue");
 
 
@@ -125,6 +126,17 @@ class Blockchain {
                                 ioSocket.emit("delete_transaction", transaction._id.toHexString(), false);
                                 await Player.findByIdAndUpdate(transaction.consumer._id, {balance: newBalance});
                                 await Transaction.findByIdAndDelete(transaction._id);
+                                const deletedTransaction = await new DeletedTransaction({
+                                    consumer: transaction.consumer,
+                                    provider: transaction.provider,
+                                    typeOfService: transaction.typeOfService,
+                                    amountOfService: transaction.amountOfService,
+                                    price: transaction.price,
+                                    txFee: transaction.txFee,
+                                    typeOfTransaction: transaction.typeOfTransaction,
+                                    orderId: transaction.orderId
+                                });
+                                await deletedTransaction.save();
                             }
                         }
                     }

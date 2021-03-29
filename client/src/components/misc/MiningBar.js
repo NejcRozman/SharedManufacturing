@@ -45,6 +45,20 @@ const MiningBar = () => {
         setWidth(width);
     }, 50);
 
+    /*useEffect(() => {
+        let time = 200;
+        const interval = setInterval(async () => {
+            let width = await Math.floor(((time / 200)) * 100);
+            setTimeLeft(millisToMinutesAndSeconds(time*50));
+            setWidth(width);
+            time--;
+            if (time < 0) {
+                clearInterval(interval);
+            }
+        }, 50);
+        return () => clearInterval(interval);
+    }, [gameData.miningTime]);*/
+
 
 
     return (
