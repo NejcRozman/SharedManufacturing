@@ -6,6 +6,7 @@ const Player = require('../models/Player');
 const Transaction = require('../models/Transaction');
 const TransactionData = require('../models/TransactionData');
 const DeletedTransaction = require('../models/DeletedTransaction');
+const AllTransaction = require('../models/AllTransaction');
 const Admin = require('../models/Admin');
 const Order = require('../models/Order');
 const OrderData = require('../models/OrderData');
@@ -235,6 +236,18 @@ q_create_transaction = async (req) => {
                         req.io.emit("create_transaction", transaction);
                         await Player.findByIdAndUpdate(req.params.playerId, {balance: newBalance});
                         await transaction.save();
+                        const allTransaction = await new AllTransaction({
+                            consumer: req.params.playerId,
+                            provider: doc.provider,
+                            typeOfService: doc.typeOfService,
+                            amountOfService: doc.amountOfService,
+                            timeForService: doc.timeForService,
+                            price: doc.price,
+                            txFee: txFee,
+                            typeOfTransaction: "trade",
+                            orderId: id
+                        });
+                        await allTransaction.save();
                         return 200;
                     } else {
                         return 400;
@@ -362,6 +375,16 @@ q_stake = async (req) => {
                         req.io.emit("create_transaction", transaction);
                         await Player.findByIdAndUpdate(req.params.playerId, {balance: newBalance});
                         await transaction.save();
+                        const allTransaction = await new AllTransaction({
+                            consumer: req.params.playerId,
+                            provider: "5f9945a43173144c25fea161",
+                            typeOfService: "Stake",
+                            amountOfService: 0,
+                            price: stake,
+                            txFee: txFee,
+                            typeOfTransaction: "stake"
+                        });
+                        await allTransaction.save();
                         return 200;
                     } else {
                         return 400;
@@ -428,6 +451,16 @@ q_unstake = async (req) => {
                             req.io.emit("create_transaction", transaction);
                             await Player.findByIdAndUpdate(req.params.playerId, {balance: newBalance});
                             await transaction.save();
+                            const allTransaction = await new AllTransaction({
+                                consumer: req.params.playerId,
+                                provider: "5f9945a43173144c25fea161",
+                                typeOfService: "Unstake",
+                                amountOfService: 0,
+                                price: unstake,
+                                txFee: txFee,
+                                typeOfTransaction: "unstake"
+                            });
+                            await allTransaction.save();
                             return 200;
                         } else {
                             return 400;

@@ -27,6 +27,16 @@ export default function Login () {
         }
     };
 
+    const handleKeypress = async e => {
+        try {
+            if (e.key === 'Enter') {
+                submit(e);
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    };
+
     return (
         <div className="login-App">
             <div className="login">
@@ -40,11 +50,11 @@ export default function Login () {
                             <div className={"login-form"}>
                                 <div className={"login-form-group"}>
                                     <label htmlFor={"playerName"}>Player name</label>
-                                    <input type={"text"} name={"playerName"} placeholder={"Enter name"} onChange={e => setPlayerName(e.target.value)}/>
+                                    <input type={"text"} name={"playerName"} placeholder={"Enter name"} onChange={e => setPlayerName(e.target.value)} onKeyPress={e => handleKeypress(e)}/>
                                 </div>
                                 <div className={"login-form-group"}>
                                     <label htmlFor={"password"}>Password</label>
-                                    <input type={"password"} name={"password"} placeholder={"Enter password"} onChange={e => setPassword(e.target.value)}/>
+                                    <input type={"password"} name={"password"} placeholder={"Enter password"} onChange={e => setPassword(e.target.value)} onKeyPress={e => handleKeypress(e)}/>
                                 </div>
                             </div>
                         </div>

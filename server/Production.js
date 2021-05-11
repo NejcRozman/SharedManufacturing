@@ -116,7 +116,7 @@ class Production {
         return new Promise(async (resolve, reject) => {
             let that = this;
             try {
-                const newTime = ((upgradeNumber + 2) ** that.exponent) * initialTimeForService;
+                const newTime = ((upgradeNumber + 2) ** that.exponent) * (initialTimeForService - 30000) + 30000;
                 resolve(newTime);
             } catch(err) {
                 reject(err);

@@ -10,7 +10,7 @@ const {default: PQueue} = require("p-queue");
 
 class Blockchain {
     constructor() {
-        this.timeForBlock = 100000;
+        this.timeForBlock = 10000;
         this.timeInterval = {};
         this.adminId = "5f9945a43173144c25fea161";
         this.blockchainQueue = new PQueue({ concurrency: 1 });
@@ -28,7 +28,7 @@ class Blockchain {
                             return (prev.txFee > current.txFee) ? prev : current
                         });
                         // Distribute TxFee between players
-                        await that.q_distribute_fee(ioSocket, playerSockets, queue, max);
+                        let winners = await that.q_distribute_fee(ioSocket, playerSockets, queue, max);
                         // Process transaction
                         if (max.typeOfTransaction === "trade") {
                             await that.q_trade(ioSocket, playerSockets, queue, max);
@@ -47,6 +47,7 @@ class Blockchain {
                             txFee: max.txFee,
                             typeOfTransaction: max.typeOfTransaction,
                             orderId: max.orderId,
+                            winners: winners
                         });
                         ioSocket.emit("delete_transaction", max._id.toHexString(), true);
                         ioSocket.emit("add_allTransaction", transactionData);
@@ -69,6 +70,7 @@ class Blockchain {
             let that = this;
             try {
                 return that.blockchainQueue.add(async () => {
+                    let winners = [];
                     if (max.txFee > 0) {
                         const players = await Player.find();
                         let lotteryArray = [];
@@ -80,14 +82,21 @@ class Blockchain {
                                 lotteryArray.push(player._id);
                             }
                         });
-                        let index = Math.floor(Math.random() * sum);
-                        const winner = await Player.findById(lotteryArray[index]);
-                        ioSocket.emit("update_balance", winner.balance + max.txFee, winner._id.toHexString(), "stake", winner.fromStakeBalance + max.txFee);
-                        await Player.findByIdAndUpdate(lotteryArray[index], {
-                            $inc: { balance: max.txFee, fromStakeBalance: max.txFee }
+                        for (let i = 0; i < max.txFee; i++) {
+                            let index = Math.floor(Math.random() * sum);
+                            winners.push(lotteryArray[index]);
+                        }
+                        await players.forEach(async player => {
+                            let reward = winners.filter((value) => (value === player._id)).length;
+                            if(reward !== 0) {
+                                ioSocket.emit("update_balance", player.balance + reward, player._id.toHexString(), "stake", player.fromStakeBalance + reward);
+                                await Player.findByIdAndUpdate(player._id, {
+                                    $inc: { balance: reward, fromStakeBalance: reward }
+                                });
+                            }
                         });
                     }
-                    resolve(true);
+                    resolve(winners);
                 });
             } catch(err) {
                 reject(err);

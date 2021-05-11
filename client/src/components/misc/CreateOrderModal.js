@@ -51,7 +51,7 @@ const CreateOrderModal = () => {
                                 closeCreateOrderModal();
                                 setAlertContent('');
                                 setShowAlert(false);
-                                setPrice();
+                                setPrice("0");
                                 document.getElementById("priceInput").value= "";
                             }
                         }
@@ -78,6 +78,15 @@ const CreateOrderModal = () => {
         }
     };
 
+    const handleKeypress = async e => {
+        try {
+            if (e.key === 'Enter') {
+                confirm();
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    };
 
     return (
         <div
@@ -90,7 +99,7 @@ const CreateOrderModal = () => {
                 <div className={"modal-input-group"}>
                     <label htmlFor={"price"}>Price</label>
                     <div className="modal-input-group-container">
-                        <input type={"text"} name={"price"} id={"priceInput"} placeholder={"Enter price"} onChange={e => changePriceInput(e)}/>
+                        <input type={"text"} name={"price"} id={"priceInput"} placeholder={"Enter price"} onChange={e => changePriceInput(e)} onKeyPress={e => handleKeypress(e)}/>
                     </div>
                 </div>
                 <div className={`${showAlert? 'modal-input-alert show-modal-input-alert' : 'modal-input-alert'}`}>

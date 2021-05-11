@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useGlobalContext} from "../../context/context";
 import { FaTimes } from 'react-icons/fa';
 import Axios from "axios/index";
@@ -10,6 +10,7 @@ const ConfirmModal = () => {
         try {
             const token = localStorage.getItem("auth-token");
             const playerId = localStorage.getItem("playerId");
+            debugger;
             if (confirmModalContent.type === "cancel transaction") {
                 const confirmRes =  await Axios.delete(`/player/cancelTransaction/${playerId}`, {
                     headers: {
@@ -20,42 +21,28 @@ const ConfirmModal = () => {
                     }
                 });
             }
-            if (confirmModalContent.type === "cancel trade") {
-                const confirmRes =  await Axios.delete(`/player/cancelTrade/${playerId}`, {
-                    headers: {
-                        Authorization: "Bearer " + token
-                    },
-                    data: {
-                        tradeId: confirmModalContent.id
-                    }
-                });
-            }
-            if (confirmModalContent.type === "accept trade") {
-                const data = {
-                    tradeId: confirmModalContent.id
-                };
-                const options = {
-                    headers: {
-                        Authorization: "Bearer " + token
-                    }
-                };
-                const confirmRes =  await Axios.post(`/player/acceptTrade/${playerId}`, data, options);
-            }
-            if (confirmModalContent.type === "reject trade") {
-                const confirmRes =  await Axios.delete(`/player/rejectTrade/${playerId}`, {
-                    headers: {
-                        Authorization: "Bearer " + token
-                    },
-                    data: {
-                        tradeId: confirmModalContent.id
-                    }
-                });
-            }
             closeConfirmModal();
         } catch(err) {
             console.log(err);
         }
     };
+
+    const handleKeypress = (e) => {
+        try {
+            if (e.key === 'Enter') {
+                confirm();
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("keydown", e => handleKeypress(e));
+        return () => {
+            document.removeEventListener("keydown", e => handleKeypress(e));
+        };
+    }, [confirmModalContent]);
 
     return (
         <div

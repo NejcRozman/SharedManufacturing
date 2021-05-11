@@ -113,6 +113,16 @@ const TradeModal = () => {
         renderTableData();
     }, [gameData]);
 
+    const handleKeypress = async e => {
+        try {
+            if (e.key === 'Enter') {
+                confirm();
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    };
+
     return (
         <div
             className={
@@ -131,7 +141,7 @@ const TradeModal = () => {
                         <div className={"trade-modal-input-group"}>
                             <label htmlFor={"txFee"}>Tx Fee</label>
                             <div className="trade-modal-input-group-container">
-                                <input type={"text"} name={"txFee"} id={"inputHolder"} placeholder={"Enter tx fee"} onChange={e => changeFeeInput(e)}/>
+                                <input type={"text"} name={"txFee"} id={"inputHolder"} placeholder={"Enter tx fee"} onChange={e => changeFeeInput(e)} onKeyPress={e => handleKeypress(e)}/>
                             </div>
                         </div>
                         <div className={`${showAlert? 'trade-modal-input-alert show-trade-modal-input-alert' : 'trade-modal-input-alert'}`}>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useGlobalContext} from "../../context/context";
 import { FaTimes } from 'react-icons/fa';
 import Axios from "axios/index";
@@ -24,6 +24,23 @@ const CancelOrderModal = () => {
             console.log(err);
         }
     };
+
+    const handleKeypress = (e) => {
+        try {
+            if (e.key === 'Enter') {
+                confirm();
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("keydown", e => handleKeypress(e));
+        return () => {
+            document.removeEventListener("keydown", e => handleKeypress(e));
+        };
+    }, [cancelOrderModalContent]);
 
     return (
         <div

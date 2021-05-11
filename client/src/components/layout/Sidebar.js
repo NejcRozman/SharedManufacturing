@@ -21,7 +21,7 @@ const Sidebar = () => {
         let newRelativeStake = ((gameData.player.stake / gameData.totalStake) * 100).toFixed(1);
         setRelativeStake(newRelativeStake);
         const renderTableData = async () => {
-            const players = await gameData.players.sort((a, b) => parseInt(b.upgradeNumber) - parseInt(a.upgradeNumber));
+            const players = await gameData.players.sort((a, b) => parseInt(b.upgradeNumber) === parseInt(a.upgradeNumber) ? (parseInt(b.balance) + parseInt(b.stake)) - (parseInt(a.balance) + parseInt(a.stake)) : parseInt(b.upgradeNumber) - parseInt(a.upgradeNumber));
             const playersArray = await players.slice(0, 5);
             setTableDataArray(playersArray);
         };

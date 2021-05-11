@@ -10,6 +10,7 @@ const app = express();
 
 const server = require('http').Server(app);
 
+//Uncomment for production
 /*const https = require('https');
 const fs = require('fs');
 const privateKey = fs.readFileSync('/etc/letsencrypt/live/sharedmanufacturing.ldse.si/privkey.pem', 'utf8'); // key
@@ -19,8 +20,9 @@ const credentials = {
     key: privateKey,
     cert: certificate,
     ca: ca
-};
-const server = https.createServer(credentials, app);*/
+};*/
+
+//const server = https.createServer(credentials, app);
 
 const io = require('socket.io')(server, {
     wsEngine: 'ws',
@@ -68,22 +70,9 @@ app.use((error, req, res, next) => {
     })
 });
 
-/*mongoose.connect('mongodb+srv://ldsedev:' + process.env.MONGO_ATLAS_PW + '@cluster0.hka4i.mongodb.net/sharedManufacturing?retryWrites=true&w=majority', {
-    useNewUrlParser: true,
-});*/
-
-/*mongoose.connect('mongodb://admin:' + process.env.MONGO_PW + '@127.0.0.1:27017/SharedManufacturing?authSource=admin', {
-    useNewUrlParser: true,
-});*/
-
-/*mongoose.connect('mongodb://localhost:27017/SharedManufacturing', {
-    useNewUrlParser: true,
-});*/
-
 mongoose.connect('mongodb://127.0.0.1:27017/SharedManufacturing', {
     useNewUrlParser: true,
 });
-
 
 
 io.use((socket, next) => {

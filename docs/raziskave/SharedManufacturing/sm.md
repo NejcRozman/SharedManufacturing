@@ -16,7 +16,7 @@ Ključen del igre je bločno-verižna tehnologija (ang. blockchain), ki je plač
 
 ## Osnovne Informacije
 
-- **CILJ IGRE**: Cilj igre je, da igralec čim bolj razvije svojo proizvodnjo. Zmagovalec je tako igralec, ki je v igri največkrat nadgradil svoj proizvodni sistem.
+- **CILJ IGRE**: Cilj igre je, da igralec čim bolj razvije svojo proizvodnjo. Zmagovalec je tako igralec, ki je v igri največkrat nadgradil svoj proizvodni sistem (v primeru delitve mest odloča seštevek vsega dobroimetja _sredstva na računu + vložena sredstva_).
 - Čas trajanja: Igra traja približno dve uri in igralci ne vedo koliko časa je še do konca.
 - Začetek igre: Vsi igralci začnejo z enakimi začetnimi nastavitvami (denar, razvitost proizvodnje).
 - Komunikacija: Dovoljeno je komuniciranje med igralci v igri po javnih ali zasebnih kanalih.
@@ -24,13 +24,17 @@ Ključen del igre je bločno-verižna tehnologija (ang. blockchain), ki je plač
 
 | Uvrstitev  | Nagrada  |
 | :------------: |:---------------:| 
-| 1. mesto | 10T | 
+|https://www.windowscentral.com/how-manage-time-servers-windows-10 1. mesto | 10T | 
 | 2. mesto | 9T |
 | 3. mesto | 8T |
-| 4. do 7. mesto| 6T | 
-| 8. do 16. mesto | 3T | 
-| Ostali | 0T |
+| 1. tretjina| 6T | 
+| 2. tretjina | 3T | 
+| 3. tretjina | 1T |
 
+
+**OPOZORILO**: Za boljšo uporabniško izkušnjo si sinhronizirajte vašo uro na računalniku z internetnim časom!
+
+[Povezava do navodil za sinhronizacijo na Windows OS](https://www.windowscentral.com/how-manage-time-servers-windows-10)
 
 ## Uporaba Aplikacije
 

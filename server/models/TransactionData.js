@@ -36,6 +36,9 @@ const TransactionDataSchema = new mongoose.Schema({
     orderId: {
         type: mongoose.Schema.Types.ObjectId,
     },
+    winners: {
+        type: [],
+    },
     createdAt: {
         type: Date,
         default: Date.now,

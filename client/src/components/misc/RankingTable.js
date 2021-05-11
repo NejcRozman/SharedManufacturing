@@ -7,7 +7,7 @@ const RankingTable = () => {
 
     useEffect(() => {
         const renderTableData = async () => {
-            const players = await gameData.players.sort((a, b) => parseInt(b.upgradeNumber) - parseInt(a.upgradeNumber));
+            const players = await gameData.players.sort((a, b) => parseInt(b.upgradeNumber) === parseInt(a.upgradeNumber) ? (parseInt(b.balance) + parseInt(b.stake)) - (parseInt(a.balance) + parseInt(a.stake)) : parseInt(b.upgradeNumber) - parseInt(a.upgradeNumber));
             setTableDataArray(players);
         };
         renderTableData();
@@ -28,6 +28,7 @@ const RankingTable = () => {
                                 <th>Type of service</th>
                                 <th>Number of upgrades</th>
                                 <th>Balance</th>
+                                <th>Stake</th>
                                 <th>Revenue from trade</th>
                                 <th>Revenue from stake</th>
                             </tr>
@@ -44,6 +45,7 @@ const RankingTable = () => {
                                         <td>{item.typeOfService}</td>
                                         <td>{item.upgradeNumber}</td>
                                         <td>{item.balance}</td>
+                                        <td>{item.stake}</td>
                                         <td>{item.fromServiceBalance}</td>
                                         <td>{item.fromStakeBalance}</td>
                                     </tr>

@@ -87,12 +87,12 @@ exports.start_game = async (req, res, next) => {
             if (validator.isInt(req.body.timeForBlock) && validator.isFloat(req.body.exponent)) {
                 await Player.updateMany({}, {
                     amountOfAvailableService: 1,
-                    timeForService: 300000,
+                    timeForService: req.body.timeForService,
                     amountOfOtherService1: 0,
                     amountOfOtherService2: 0,
                     upgradeNumber: 0,
-                    balance: 1000,
-                    stake: 1,
+                    balance: req.body.balance,
+                    stake: req.body.stake,
                     fromStakeBalance: 0,
                     fromServiceBalance: 0
                 });
